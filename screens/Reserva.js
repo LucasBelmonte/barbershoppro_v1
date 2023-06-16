@@ -8,6 +8,7 @@ import {
   ImageBackground,
   TextInput,
   Image,
+  TouchableOpacity,
 } from "react-native";
 // import {  } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
@@ -15,7 +16,10 @@ import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 
 const Reserva = () => {
   const navigation = useNavigation();
-
+    const alertas =  () => {
+      alert("Reseva efetuada com sucesso!");
+      navigation.navigate("AgendaCliente");
+    }
   return (
     <ScrollView
       style={[styles.reserva, styles.reservaLayout]}
@@ -100,8 +104,10 @@ const Reserva = () => {
           </Text>
         </Text>
       </Text>
-      <Text style={[styles.text2, styles.textTypo]}>{` `}</Text>
-      <Text style={[styles.reservar, styles.reservarTypo]}>Reservar</Text>
+      <TouchableOpacity style={[styles.reservar, styles.reservarTypo]} onPress={alertas}>
+
+      <Text style={styles.reservarText}>Reservar</Text>
+      </TouchableOpacity>
       <Text style={[styles.corteRealizadoNa, styles.corteTypo]}>
         Corte realizado na maquina
       </Text>
@@ -135,7 +141,11 @@ const Reserva = () => {
           </Text>
         </Text>
       </Text>
+      <TouchableOpacity style={[styles.reservar2, styles.reservarTypo]} onPress={alertas}>
+
+{/* <Text style={styles.reservarText}>Reservar</Text> */}
       <Text style={[styles.reservar2, styles.reservar2Position, styles.reservarTypo]}>Reservar</Text>
+</TouchableOpacity>
       <Text style={[styles.corteRealizadoNa1, styles.corteTypo]}>
         Corte realizado na maquina
       </Text>
@@ -371,9 +381,9 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   reservaChild: {
-    top: 22,
+    top: 30,
     left: 0,
-    width: 360,
+    width: 400,
     height: 81,
     zIndex: 0,
   },
@@ -553,6 +563,21 @@ const styles = StyleSheet.create({
     zIndex: 19,
     top: 455,
     position: "absolute",
+    
+  },
+  reservarText: {
+    zIndex: 20,
+    // top: 0,
+    right: 10,
+    fontSize: FontSize.size_mini,
+    textShadowRadius: 4,
+    textShadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    fontFamily: FontFamily.interBold,
+
+    // position: "absolute",
     
   },
   corteRealizadoNa: {

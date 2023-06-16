@@ -1,8 +1,5 @@
-import * as React from "react";
-import {useState,useEffect} from "react";
-// import firebase from '../src/Config/';
-// import { collection, getDocs } from "firebase/firestore";
-import { initializeApp } from "firebase/app";
+import React,{useState,useEffect} from "react";
+
 
 import {
   ScrollView,
@@ -18,30 +15,8 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FontFamily, FontSize, Color, Border } from "../GlobalStyles";
-import { signInWithEmailAndPassword } from "firebase/auth";
-// import firebase from "../src/Config";
-import {getAuth} from 'firebase/auth';
-// import 'firebase/firestore';
-
-import * as firebase from 'firebase/app';
-import 'firebase/firestore';
-
-// // Configurações do Firebase
-// const firebaseConfig = {
-//   apiKey: "AIzaSyA3raEY0tfqz1Jw25Y6AeK531A1zB7MwKQ",
-//   authDomain: "barbeshoppro-330fb.firebaseapp.com",
-//   databaseURL: "https://barbeshoppro-330fb-default-rtdb.firebaseio.com",
-//   projectId: "barbeshoppro-330fb",
-//   storageBucket: "barbeshoppro-330fb.appspot.com",
-//   messagingSenderId: "1078539980716",
-//   appId: "1:1078539980716:web:33a66a7defd5f1b2f83409",
-//   // measurementId: "G-7Y3KK4VWHC"
-// };
-
-// // Inicialize o Firebase
-// firebase.initializeApp(firebaseConfig);
-
-
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginTeste = () => {
   const navigation = useNavigation();
@@ -49,23 +24,31 @@ const LoginTeste = () => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
-  async function Login() {
-    try {
-      const auth = getAuth();
-      await signInWithEmailAndPassword(auth, email, senha)
-      .then(value =>{
-        navigation.navigate('InicioCliente')
-        // console.log('\n' + value.user.uid.email);
-        {
-          console.log('Logado com sucesso');
-        }
-      })
-      alert('Logado com sucesso!');
+  const Login = async  () => {
+    try{
+    const dados = {
+      userEmail:email,
+      senha,
+      };
+        await axios.post('http://10.0.0.3:5000/login', dados)
+        .then((response) => {
+          AsyncStorage.setItem('userData',JSON.stringify(response.data));
+
+            if (response.data.tipo === 'Cliente') {
+              
+              navigation.navigate('AgendaCliente');
+
+            } else if (response.data.tipo === 'Barbeiro') {
+              
+              navigation.navigate('AgendaBarbeiro');
+            }
+          
+        })
+        .catch(err => console.error(err?.response?.data?.message));
     } catch (error) {
-      // alert('Ocorreu um erro durante o cadastro: ');
-      alert('Ocorreu um erro durante o login: ' + error.message);
+      console.error('Erro ao salvar os campos:', error);
     }
-  }
+    };
 
   return (
     <KeyboardAvoidingView behavior="position">
@@ -122,7 +105,7 @@ const LoginTeste = () => {
         resizeMode="cover"
         source={require("../assets/rectangle-3.png")}
       /> */}
-       <Pressable style={styles.button}
+      <Pressable style={styles.button}
                   onPress={Login}
                   >
         <Text style={styles.buttonText}>Entrar</Text>

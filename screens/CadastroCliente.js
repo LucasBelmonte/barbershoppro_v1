@@ -12,11 +12,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
-import firebase from 'firebase/app';
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { getAuth } from 'firebase/auth';
-
-
+import axios from 'axios';
 
 const CadastroCliente1 = () => {
   const navigation = useNavigation();
@@ -28,15 +24,25 @@ const CadastroCliente1 = () => {
   const [senha, setSenha] = useState('');
   const [senhaConfirm, setSenhaConfirm] = useState('');
 
-  async function handleSignUp() {
+  const salvarCampos = async  () => {
+    const dados = {
+    nomeDaBarbearia : 'null',
+    endereco: 'null' ,
+    nome,
+    userEmail:email,
+    senha,
+    tipo: 'Cliente',
+  };
+
     try {
-      const auth = getAuth();
-      await createUserWithEmailAndPassword(auth, email, senha);
-      alert('Cadastro realizado com sucesso!');
+      await axios.post('http://10.0.0.3:5000/register',dados)
+      .then((response) => console.log(response))
+      .catch(err => console.error(err?.response?.data?.message));
+ 
     } catch (error) {
-      alert('Ocorreu um erro durante o cadastro: ' + error.message);
+      console.error('Erro ao salvar os campos:', error);
     }
-  }
+  };
 
 
   return (
@@ -68,12 +74,16 @@ const CadastroCliente1 = () => {
         keyboardType="default"
         secureTextEntry
         placeholderTextColor="#979494"
+        onChangeText={(text) => setSenhaConfirm(text)}
+        value={senhaConfirm}
       />
       <TextInput
         style={[styles.email1, styles.senhaLayout]}
         placeholder="Email"
         keyboardType="default"
         placeholderTextColor="#979494"
+        onChangeText={(text) => setEmail(text)}
+        value={email}
       />
       <TextInput
         style={[styles.senha1, styles.senhaLayout]}
@@ -81,12 +91,16 @@ const CadastroCliente1 = () => {
         keyboardType="default"
         secureTextEntry
         placeholderTextColor="#979494"
+        onChangeText={(text) => setSenha(text)}
+        value={senha}
       />
       <TextInput
         style={[styles.nomeCompleto, styles.senhaLayout]}
         placeholder="Nome completo"
         keyboardType="default"
         placeholderTextColor="#979494"
+        onChangeText={(text) => setNome(text)}
+        value={nome}
       />
       <ImageBackground
         style={styles.barbeiroIcon}
@@ -105,7 +119,7 @@ const CadastroCliente1 = () => {
       </Pressable>
       <Pressable
         style={styles.cadastrar}
-        onPress={() => navigation.navigate("InicioCliente")}
+        onPress={salvarCampos}
       >
         <Text style={styles.cadastrar1}>cadastrar</Text>
       </Pressable>

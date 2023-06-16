@@ -1,6 +1,3 @@
-
-import { initializeApp } from "firebase/app";
-
 import * as React from "react";
 import { useEffect, useState } from 'react';
 import {
@@ -14,25 +11,7 @@ import {
 } from "react-native";
 import { FontFamily, FontSize, Color, Border } from "../GlobalStyles";
 import { useNavigation } from "@react-navigation/native";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-// import firebase from 'firebase/app';
-// import 'firebase/firestore';
-
-import db from "../src/Config/";
-import firebase from "firebase/app";
-import "firebase/firestore";
-import "firebase/database";
-import "firebase/auth";
-
-// const firestore = firebase.firestore();
-// const db = firebase.firestore();
-// const db_store = getFirestore(app);
-
-// import firebase from 'firebase/compat/app'; //v9
-// import 'firebase/compat/auth'; //v9
-// import 'firebase/compat/firestore'; //v9
-
-import { collection, addDoc } from "firebase/firestore";
+import axios from 'axios';
 
 const CadastroBarbeiro1 = () => {
   const navigation = useNavigation();
@@ -44,41 +23,23 @@ const CadastroBarbeiro1 = () => {
   const [senhaConfirm, setSenhaConfirm] = useState('');
   
   
- 
+  const salvarCamposNoFirestore = async  () => {
+    const dados = {
+    nomeDaBarbearia,
+    endereco,
+    nome,
+    userEmail:email,
+    senha,
+    tipo: 'Barbeiro',
+  };
 
-  // async function handleSignUp() {
-  //   try {
-  //     const auth = getAuth();
-  //     await createUserWithEmailAndPassword(auth, email, senha);
-  //     alert('Cadastro realizado com sucesso!');
-  //   } catch (error) {
-  //     alert('Ocorreu um erro durante o cadastro: ' + error.message);
-  //   }
-  // }
-  const salvarCamposNoFirestore = async () => {
-  
-    var tipo = 'Barbeiro';
     try {
-      // const db = firebase.firestore();
-      // Crie um objeto com os valores dos campos
-      const dados = {
-        nomeDaBarbearia: nomeDaBarbearia,
-        endereco: endereco,
-        nome: nome,
-        email: email,
-        senha: senha,
-        senhaConfirm: senhaConfirm,
-        tipo: tipo,
-      };
-  
-      // Adicione os dados à coleção "barbearias"
-      await db.collection('Usuarios').add(dados);
-  
-      // Sucesso! Os campos foram salvos no Firestore
-      console.log('Campos salvos no Firestore com sucesso!');
+      await axios.post('http://10.0.0.3:5000/register',dados)
+      .then((response) => console.log(response))
+      .catch(err => console.error(err?.response?.data?.message));
+ 
     } catch (error) {
-      // Ocorreu um erro ao salvar os campos
-      console.error('Erro ao salvar os campos no Firestore:', error);
+      console.error('Erro ao salvar os campos:', error);
     }
   };
   
@@ -108,6 +69,8 @@ const CadastroBarbeiro1 = () => {
         placeholder="Nome da barbearia"
         keyboardType="default"
         placeholderTextColor="#979494"
+        onChangeText={(text) => setNomeDaBarbearia(text)}
+        value={nomeDaBarbearia}
       />
       {/* <Image
         style={[styles.bgIcon, styles.iconChildSpaceBlock]}
@@ -127,6 +90,8 @@ const CadastroBarbeiro1 = () => {
         placeholder="Endereço(Barbearia)"
         keyboardType="default"
         placeholderTextColor="#979494"
+        onChangeText={(text) => setEndereco(text)}
+        value={endereco}
       />
       {/* <Image
         style={[styles.cadastroBarbeiroInner, styles.iconChildSpaceBlock]}
@@ -138,6 +103,8 @@ const CadastroBarbeiro1 = () => {
         placeholder="Nome completo"
         keyboardType="default"
         placeholderTextColor="#979494"
+        onChangeText={(text) => setNome(text)}
+        value={nome}
       />
       {/* <Image
         style={[styles.rectangleIcon, styles.iconChildSpaceBlock]}
@@ -149,6 +116,8 @@ const CadastroBarbeiro1 = () => {
         placeholder="Email"
         keyboardType="default"
         placeholderTextColor="#979494"
+        onChangeText={(text) => setEmail(text)}
+        value={email}
       />
       {/* <Image
         style={[styles.cadastroBarbeiroChild1, styles.iconChildSpaceBlock]}
@@ -161,6 +130,8 @@ const CadastroBarbeiro1 = () => {
         keyboardType="default"
         secureTextEntry
         placeholderTextColor="#979494"
+        onChangeText={(text) => setSenha(text)}
+        value={senha}
       />
       {/* <Image
         style={[styles.cadastroBarbeiroChild2, styles.iconChildSpaceBlock]}
@@ -173,6 +144,8 @@ const CadastroBarbeiro1 = () => {
         keyboardType="default"
         secureTextEntry
         placeholderTextColor="#979494"
+        onChangeText={(text) => setSenhaConfirm(text)}
+        value={senhaConfirm}
       />
       <Pressable
         style={styles.wrapper}

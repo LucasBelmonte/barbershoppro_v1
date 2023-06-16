@@ -14,6 +14,8 @@ import InicioCliente from "./screens/InicioCliente";
 import CadastroCliente from "./screens/CadastroCliente";
 import RecuperarSenha from "./screens/RecuperarSenha";
 import Cadastro from "./screens/Cadastro";
+import EditarDadosPerfil from "./screens/EditarDadosPerfil";
+import EditarDadosPerfilCliente from "./screens/EditarDadosPerfilCliente";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text, Pressable, TouchableOpacity } from "react-native";
@@ -103,6 +105,16 @@ const App = () => {
             <Stack.Screen
               name="Cadastro"
               component={Cadastro}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="EditarDadosPerfil"
+              component={EditarDadosPerfil}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="EditarDadosPerfilCliente"
+              component={EditarDadosPerfilCliente}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

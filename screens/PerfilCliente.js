@@ -1,64 +1,43 @@
-import * as React from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  Pressable,
-  Text,
-  ImageBackground,
-  Image,
-} from "react-native";
-// import {  } from "expo-image";
+import React,{useState,useEffect} from "react";
+import { Image,TouchableOpacity,ScrollView, StyleSheet, View, Text,TextInput, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
-
-const PerfilCliente = () => {
+import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const PerfilCliente = ({}) => {
   const navigation = useNavigation();
+  const [dados,setDados] = useState([]); 
+  const [name,setName] = useState([]); 
+  const [email,setEmail] = useState([]); 
+  const [isLoading, setIsLoading] = useState(false);
+  
+    useEffect(() => {
+      const pegarDadosdoStorage = async () => {
+      
+        const user = await AsyncStorage.getItem('userData')
+        .then((data) => {
+          const parsedUser = JSON.parse(data)
+          setDados(parsedUser)})
+          .catch(error => console.error(error));
+        }
+        pegarDadosdoStorage()
+
+    }, []);
 
   return (
     <ScrollView
-      style={styles.perfilCliente}
-      contentContainerStyle={styles.perfilClienteScrollViewContent}
     >
-      <View style={[styles.perfilClienteChild, styles.rectangleViewBg]} />
-      {/* <Image
-        style={styles.perfilClienteItem}
-        contentFit="cover"
-        source={require("../assets/rectangle-43.png")}
-      /> */}
-      <Text style={[styles.seuPerfil, styles.perfilText]}>Seu perfil</Text>
-      
-      <Text style={[styles.cliente, styles.clienteTypo]}>{`Cliente `}</Text>
+          <View style={styles.perfilBarbeiro}>
       <Image
-        style={[styles.ellipseIcon, styles.ellipseIconLayout]}
-        contentFit="cover"
-        source={require("../assets/ellipse-1.png")}
-      />
-      <Image
-        style={[styles.barbeiroIcon, styles.barbeiroIconLayout]}
+        style={styles.bgIcon}
         resizeMode="cover"
-        source={require("../assets/barbeiro.png")}
+        source={require("../assets/bg.png")}
       />
-      <Text style={[styles.clientegmailcom, styles.clienteTypo]}>
-        cliente@gmail.com
-      </Text>
-      <Text style={[styles.editarPerfil, styles.perfilText]}>
-        Editar perfil
-      </Text>
-      <View style={[styles.rectangleView, styles.rectangleViewBg]} />
-      <Image
-        style={[styles.perfilClienteChild1, styles.ellipseIconLayout]}
-        contentFit="cover"
-        source={require("../assets/ellipse-1.png")}
-      />
-      <Text style={[styles.barbershoppro, styles.perfilText]}>
+      <View style={[styles.perfilBarbeiroChild, styles.perfilChildBg]} />
+      <Text style={[styles.seuPerfil, styles.seuPerfilText]}>Seu perfil</Text>
+      <Text style={[styles.barberShopPro, styles.seuPerfilText]}>
         BarbershopPRO
       </Text>
-      <Image
-        style={[styles.barbeiroIcon1, styles.barbeiroIconLayout]}
-        contentFit="cover"
-        source={require("../assets/barbeiro.png")}
-      />
       <Pressable
         style={[styles.inicio, styles.inicioPosition]}
         onPress={() => navigation.navigate("InicioCliente")}
@@ -66,72 +45,340 @@ const PerfilCliente = () => {
         <Text style={[styles.inicio1, styles.inicio1Typo]}>Inicio</Text>
       </Pressable>
       <Pressable
-        style={[styles.perfil, styles.inicioPosition]}
-        onPress={() => navigation.navigate("PerfilCliente")}
-      >
-        <Text style={[styles.perfil1, styles.inicio1Typo]}>Perfil</Text>
-      </Pressable>
-      <Pressable
-        style={[styles.agenda, styles.inicioPosition]}
+        style={[styles.agenda, styles.agendaPosition]}
         onPress={() => navigation.navigate("AgendaCliente")}
       >
-        <Text style={[styles.agenda1, styles.inicio1Typo]}>Agenda</Text>
+        <Text style={[styles.agenda1, styles.perfilTypo]}>Agenda</Text>
       </Pressable>
-    </ScrollView>
+      <Text style={[styles.perfil, styles.perfilTypo]}>Perfil</Text>
+      <Pressable
+        style={styles.wrapper}
+        onPress={() => navigation.navigate("Login")}
+      >
+        <Image
+          style={styles.icon}
+          resizeMode="cover"
+          source={require("../assets/arrow-1.png")}
+        />
+      </Pressable>
+      <Image
+        style={[styles.perfilBarbeiroInner, styles.ellipseIconLayout]}
+        resizeMode="cover"
+        source={require("../assets/ellipse-1.png")}
+      />
+      <Image
+        style={[styles.barbeiroIcon, styles.barbeiroIconLayout]}
+        resizeMode="cover"
+        source={require("../assets/barbeiro.png")}
+      />
+      <View style={styles.rectangleView} />
+      <View style={[styles.perfilBarbeiroChild1, styles.perfilChildBg]} />
+      <Text style={[styles.barbeiroX, styles.barbeiroXPosition]}>
+        {dados?.nome}
+      </Text>
+      <Text style={[styles.ruaPapaJoo, styles.ruaPapaJooTypo]}>
+        {dados?.userEmail}
+      </Text>
+      <Image
+        style={[styles.ellipseIcon, styles.barbeiroXPosition]}
+        resizeMode="cover"
+        source={require("../assets/ellipse-1.png")}
+      />
+      <Image
+        style={[styles.barbeiroIcon1, styles.barbeiroIconLayout]}
+        resizeMode="cover"
+        source={require("../assets/barbeiro.png")}
+      />
+      <Image
+        style={styles.rectangleIcon}
+        resizeMode="cover"
+        source={require("../assets/rectangle-4.png")}
+      />
+       <Pressable
+        style={styles.editarPerfilPosition}
+        underlayColor="#979696"
+        onPress={() => navigation.navigate("EditarDadosPerfilCliente")}
+        >
+      <Text style={[styles.editarPerfil, styles.ruaPapaJooTypo]}>
+        Editar perfil
+      </Text>
+      
+      </Pressable>
+    </View>
+
+</ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
-  perfilClienteScrollViewContent: {
-    flexDirection: "column",
-    paddingHorizontal: 800,
-    paddingVertical: 360,
-  },
-  rectangleViewBg: {
+  perfilChildBg: {
     backgroundColor: Color.goldenrod,
     position: "absolute",
   },
-  perfilText: {
+  nomeTypo: {
+    justifyContent: "center",
+    textAlign: "center",
+    fontFamily: FontFamily.interSemibold,
+    fontWeight: "600",
+  },
+  seuPerfilText: {
     textShadowRadius: 4,
     textShadowOffset: {
       width: 0,
       height: 4,
     },
     textShadowColor: "rgba(0, 0, 0, 0.25)",
+    color: Color.black,
+    textAlign: "left",
     alignItems: "flex-end",
     display: "flex",
-    color: Color.black,
+  },
+  agendaPosition: {
+    top: 86,
     position: "absolute",
   },
-  perfilLayout: {
-    borderRadius: Border.br_8xs,
-    left: 22,
+  editarPerfilPosition: {
+    top: 2,
+    // position: "absolute",
   },
-  clienteTypo: {
-    height: 35,
-    fontFamily: FontFamily.interRegular,
-    fontSize: FontSize.size_xl,
+  perfilTypo: {
+    fontFamily: FontFamily.interLightItalic,
+    fontWeight: "300",
+    fontStyle: "italic",
     textShadowRadius: 4,
     textShadowOffset: {
       width: 0,
       height: 4,
     },
     textShadowColor: "rgba(0, 0, 0, 0.25)",
-    alignItems: "flex-end",
-    display: "flex",
+    height: 32,
     textAlign: "left",
     color: Color.black,
-    position: "absolute",
+    alignItems: "flex-end",
+    display: "flex",
+    fontSize: FontSize.size_xl,
   },
   ellipseIconLayout: {
     height: 56,
     width: 56,
-    position: "absolute",
+    top: 39,
   },
   barbeiroIconLayout: {
     height: 38,
     width: 50,
+    left: "50%",
     position: "absolute",
+  },
+  barbeiroXPosition: {
+    top: 191,
+    position: "absolute",
+  },
+  ruaPapaJooTypo: {
+    fontSize: FontSize.size_mini,
+    textShadowRadius: 4,
+    textShadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    textShadowColor: "rgba(0, 0, 0, 0.25)",
+    color: Color.black,
+    alignItems: "flex-end",
+    display: "flex",
+    position: "absolute",
+  },
+  bgIcon: {
+    top: -9,
+    left: 5,
+    width: 390,
+    display: "none",
+    position: "absolute",
+    height: 800,
+  },
+  perfilBarbeiroChild: {
+    top: 35,
+    left: 0,
+    width: 400,
+    height: 81,
+  },
+  perfilBarbeiroItem: {
+    top: 105,
+    left: 62,
+    borderRadius: Border.br_8xs,
+    width: 244,
+    height: 48,
+    position: "absolute",
+  },
+  nome: {
+    top: 114,
+    left: 54,
+    color: Color.darkgray,
+    width: 90,
+    height: 30,
+    alignItems: "flex-end",
+    display: "flex",
+    fontSize: FontSize.size_xl,
+    justifyContent: "center",
+    textAlign: "center",
+    fontFamily: FontFamily.interSemibold,
+    fontWeight: "600",
+    position: "absolute",
+  },
+  seuPerfil: {
+    top: 112,
+    left: 103,
+    width: 154,
+    height: 40,
+    fontFamily: FontFamily.interBold,
+    fontWeight: "700",
+    fontSize: FontSize.size_11xl,
+    textShadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    textShadowColor: "rgba(0, 0, 0, 0.25)",
+    color: Color.black,
+    position: "absolute",
+  },
+  barberShopPro: {
+    top: 35,
+    left: 13,
+    width: 261,
+    height: 32,
+    fontFamily: FontFamily.interBold,
+    fontWeight: "700",
+    fontSize: FontSize.size_11xl,
+    textShadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    textShadowColor: "rgba(0, 0, 0, 0.25)",
+    color: Color.black,
+    position: "absolute",
+  },
+  agenda1: {
+    width: 78,
+  },
+  agenda: {
+    left: 66,
+    width: 78,
+    zIndex: 19,
+    // top: ,
+    position: "absolute",
+  },
+  perfil: {
+    left: 143,
+    width: 53,
+    top: 86,
+    position: "absolute",
+    // perfil: {
+      // left: 85,
+    zIndex: 20,
+    // },
+  },
+  icon: {
+    height: "100%",
+    display: "none",
+    width: "100%",
+  },
+  wrapper: {
+    top: 30,
+    width: 20,
+    height: 20,
+    left: 35,
+    position: "absolute",
+  },
+  perfilBarbeiroInner: {
+    top: 7,
+    left: 286,
+    position: "absolute",
+  },
+  barbeiroIcon: {
+    top: 45,
+    marginLeft: 95,
+    width: 50,
+    height: 38,
+    zIndex: 18,
+    position: "absolute",
+  },
+  rectangleView: {
+    top: 384,
+    left: 17,
+    backgroundColor: Color.gainsboro,
+    width: 226,
+    height: 62,
+    display: "none",
+    position: "absolute",
+  },
+  perfilBarbeiroChild1: {
+    top: 179,
+    width: 316,
+    height: 136,
+    left: 26,
+  },
+  barbeiroX: {
+    left: 112,
+    fontFamily: FontFamily.interRegular,
+    width: 155,
+    height: 55,
+    textShadowRadius: 4,
+    textShadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    textShadowColor: "rgba(0, 0, 0, 0.25)",
+    color: Color.black,
+    textAlign: "left",
+    alignItems: "flex-end",
+    display: "flex",
+    top: 191,
+    fontSize: FontSize.size_xl,
+  },
+  ruaPapaJoo: {
+    top: 246,
+    fontWeight: "200",
+    fontFamily: FontFamily.interExtralight,
+    width: 299,
+    left: 35,
+    textAlign: "left",
+    fontSize: FontSize.size_mini,
+  },
+  ellipseIcon: {
+    height: 56,
+    width: 56,
+    left: 35,
+  },
+  barbeiroIcon1: {
+    marginLeft: -157,
+    top: 200,
+  },
+  rectangleIcon: {
+    top: 336,
+    left: 22,
+    borderRadius: Border.br_22xl,
+    width: 129,
+    height: 43,
+    position: "absolute",
+  },
+  editarPerfil: {
+    top: 340,
+    width: 125,
+    height: 29,
+    left: 26,
+    justifyContent: "center",
+    textAlign: "center",
+    fontFamily: FontFamily.interSemibold,
+    fontWeight: "600",
+    fontSize: FontSize.size_mini,
+  },
+  perfilBarbeiro: {
+    backgroundColor: Color.darkgray,
+    flex: 1,
+    overflow: "hidden",
+    height: 800,
+    width: "100%",
+  },
+  inicio: {
+    left: 5,
+    zIndex: 13,
   },
   inicioPosition: {
     
@@ -159,165 +406,11 @@ const styles = StyleSheet.create({
     textAlign: "left",
     color: Color.black,
   },
-  perfilClienteChild: {
-    top: 212,
-    width: 316,
-    height: 136,
-    zIndex: 0,
-    borderRadius: Border.br_8xs,
-    left: 35,
-  },
-  perfilClienteItem: {
-    top: 386,
-    borderRadius: Border.br_22xl,
-    width: 129,
-    height: 43,
-    zIndex: 1,
-    left: 117,
-    position: "absolute",
-  },
-  seuPerfil: {
-    top: 154,
-    left: 103,
-    width: 154,
-    zIndex: 2,
-    height: 39,
-    textAlign: "left",
-    fontFamily: FontFamily.interBold,
-    fontWeight: "700",
-    fontSize: FontSize.size_11xl,
-    textShadowRadius: 4,
-    textShadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    textShadowColor: "rgba(0, 0, 0, 0.25)",
-    alignItems: "flex-end",
-    display: "flex",
-    color: Color.black,
-  },
-  perfilClienteInner: {
-    top: 232,
-    width: 244,
-    height: 48,
-    zIndex: 3,
-    position: "absolute",
-    borderRadius: Border.br_8xs,
-    left: 22,
-  },
-  cliente: {
-    left: 115,
-    width: 99,
-    zIndex: 4,
-    top: 224,
-  },
-  ellipseIcon: {
-    left: 41,
-    zIndex: 5,
-    top: 224,
-  },
-  barbeiroIcon: {
-    top: 233,
-    left: 45,
-    zIndex: 6,
-  },
-  clientegmailcom: {
-    top: 280,
-    left: 45,
-    width: 285,
-    zIndex: 7,
-  },
-  editarPerfil: {
-    paddingTop: 5,
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 41,
-    top: 383,
-    fontSize: FontSize.size_mini,
-    fontWeight: "600",
-    fontFamily: FontFamily.interSemibold,
-    textAlign: "center",
-    justifyContent: "center",
-    width: 125,
-    height: 35,
-    zIndex: 8,
-    textShadowRadius: 4,
-    textShadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    textShadowColor: "rgba(0, 0, 0, 0.25)",
-    alignItems: "flex-end",
-    display: "flex",
-    color: Color.black,
-    backgroundColor: Color.goldenrod,
-    left: 117,
-  },
-  rectangleView: {
-    top: 35,
-    left: 0,
-    width: 400,
-    height: 81,
-    zIndex: 9,
-  },
-  perfilClienteChild1: {
-    top: 38,
-    left: 330,
-    zIndex: 10,
-  },
-  barbershoppro: {
-    top: 35,
-    left: 10,
-    width: 261,
-    zIndex: 11,
-    height: 32,
-    textAlign: "left",
-    fontFamily: FontFamily.interBold,
-    fontWeight: "700",
-    fontSize: FontSize.size_11xl,
-    textShadowRadius: 4,
-    textShadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    textShadowColor: "rgba(0, 0, 0, 0.25)",
-    alignItems: "flex-end",
-    display: "flex",
-    color: Color.black,
-  },
-  barbeiroIcon1: {
-    top: 45,
-    left: 335,
-    zIndex: 12,
-  },
   inicio1: {
     width: 52,
   },
-  inicio: {
-    left: 5,
-    zIndex: 13,
-  },
-  perfil1: {
-    width: 53,
-  },
-  perfil: {
-    left: 152,
-    zIndex: 14,
-  },
-  agenda1: {
-    width: 78,
-  },
-  agenda: {
-    left: 66,
-    zIndex: 15,
-  },
-  perfilCliente: {
-    backgroundColor: Color.darkgray,
-    flex: 1,
-    width: "100%",
-    overflow: "hidden",
-    maxWidth: "100%",
-  },
-});
+}); 
+
+
 
 export default PerfilCliente;
