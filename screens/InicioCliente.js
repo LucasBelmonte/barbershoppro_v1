@@ -1,4 +1,4 @@
-import * as React from "react";
+import React,{useEffect,useState} from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -11,9 +11,44 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import axios from 'axios';
 
+
+ 
 const InicioCliente = () => {
   const navigation = useNavigation();
+  const [nomeBarbeiro, setnomeBarbeiro] = useState([]);
+  const [tipo, setTipo] = useState([]);
+  const [endereco, setEndereco] = useState([]);
+
+  useEffect(() => {
+    const buscarGeral = async () => {
+      try {
+        const response = await axios.get("http://10.0.0.3:5000/buscarGeral");
+        console.log(response);
+        const nomesBarbeiros = response.data.map(barbeiro => barbeiro.nome);
+        const tipos = response.data.map(barbeiro => barbeiro.tipo);
+        const enderecos = response.data.map(barbeiro => barbeiro.endereco);
+        setnomeBarbeiro(nomesBarbeiros);
+        setTipo(tipos);
+        setEndereco(enderecos);
+      } catch (error) {
+        console.error("Erro ao buscar barbeiros:", error);
+      }
+    };
+  
+    buscarGeral();
+  }, []);
+  
+
+  const buscarBarbeiros = async () => {
+    try {
+      const response = await axios.get("/http://10.0.0.3:5000/inicio");
+      setBarbeiros(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar barbeiros:", error);
+    }
+  };
 
   return (
     <ScrollView
@@ -33,7 +68,7 @@ const InicioCliente = () => {
         style={styles.barbeiroX}
         onPress={() => navigation.navigate("Reserva")}
       >
-        <Text style={[styles.barbeiroX1, styles.barbeiroTypo]}>Barbeiro X</Text>
+        <Text style={[styles.barbeiroX1, styles.barbeiroTypo]}>{nomeBarbeiro[0]}</Text>
       </Pressable>
       <Image
         style={[styles.inicioClienteInner, styles.inicioLayout]}
@@ -50,7 +85,7 @@ const InicioCliente = () => {
         onPress={() => navigation.navigate("Reserva")}
       >
         <Text style={styles.ruaTypo}>
-          Rua papa João XXIII, Nº 123 San martin,50920-000, Recife
+         {endereco[0]}
         </Text>
       </Pressable>
       <Pressable
@@ -265,7 +300,7 @@ const styles = StyleSheet.create({
     borderRadius: Border.br_8xs,
   },
   barbeiroX1: {
-    height: 35,
+    height: 50,
     textShadowRadius: 4,
     textShadowOffset: {
       width: 0,

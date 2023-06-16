@@ -1,4 +1,4 @@
-import * as React from "react";
+import React,{useState,useEffect} from "react";
 import {
   ScrollView,
   Text,
@@ -12,9 +12,24 @@ import {
 // import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AgendaBarbeiro = () => {
   const navigation = useNavigation();
+  const [dados,setDados] = useState(null);
+  console.log(dados);
+  useEffect(() => {
+    const pegarDadosdoStorage = async () => {
+      
+    const user = await AsyncStorage.getItem('userData')
+    .then((data) => {
+      const parsedUser = JSON.parse(data)
+      setDados(parsedUser)})
+      .catch(error => console.error(error));
+    }
+    pegarDadosdoStorage()
+  },[])
 
   return (
     <ScrollView>

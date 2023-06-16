@@ -1,12 +1,32 @@
-import * as React from "react";
-import { Image, StyleSheet, View, Text, Pressable } from "react-native";
+import React,{useState,useEffect} from "react";
+import { Image, StyleSheet, View, Text,TextInput, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
-
-const PerfilBarbeiro = () => {
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const PerfilBarbeiro = ({}) => {
   const navigation = useNavigation();
+  const [dados,setDados] = useState([]); 
+  const [name,setName] = useState([]); 
+  const [email,setEmail] = useState([]); 
+  const [isLoading, setIsLoading] = useState(false);
+  
+    useEffect(() => {
+      const pegarDadosdoStorage = async () => {
+      
+        const user = await AsyncStorage.getItem('userData')
+        .then((data) => {
+          const parsedUser = JSON.parse(data)
+          setDados(parsedUser)})
+          .catch(error => console.error(error));
+        }
+        pegarDadosdoStorage()
+
+    }, []);
+
 
   return (
+    
     <View style={styles.perfilBarbeiro}>
       <Image
         style={styles.bgIcon}
@@ -48,10 +68,10 @@ const PerfilBarbeiro = () => {
       <View style={styles.rectangleView} />
       <View style={[styles.perfilBarbeiroChild1, styles.perfilChildBg]} />
       <Text style={[styles.barbeiroX, styles.barbeiroXPosition]}>
-        Barbeiro X
+        {dados?.nome}
       </Text>
       <Text style={[styles.ruaPapaJoo, styles.ruaPapaJooTypo]}>
-        Rua papa João XXIII, Nº 123 San martin,50920-000, Recife
+        {dados?.endereco}
       </Text>
       <Image
         style={[styles.ellipseIcon, styles.barbeiroXPosition]}
@@ -68,9 +88,16 @@ const PerfilBarbeiro = () => {
         resizeMode="cover"
         source={require("../assets/rectangle-4.png")}
       />
+       <Pressable
+        style={styles.editarPerfilPosition}
+        underlayColor="#979696"
+        onPress={() => navigation.navigate("EditarDadosPerfil")}
+        >
       <Text style={[styles.editarPerfil, styles.ruaPapaJooTypo]}>
         Editar perfil
       </Text>
+      
+      </Pressable>
     </View>
   );
 };
@@ -101,6 +128,10 @@ const styles = StyleSheet.create({
   agendaPosition: {
     top: 85,
     position: "absolute",
+  },
+  editarPerfilPosition: {
+    top: 2,
+    // position: "absolute",
   },
   perfilTypo: {
     fontFamily: FontFamily.interLightItalic,
@@ -158,7 +189,7 @@ const styles = StyleSheet.create({
   perfilBarbeiroChild: {
     top: 35,
     left: 0,
-    width: 360,
+    width: 400,
     height: 81,
   },
   perfilBarbeiroItem: {
@@ -279,8 +310,8 @@ const styles = StyleSheet.create({
   barbeiroX: {
     left: 112,
     fontFamily: FontFamily.interRegular,
-    width: 99,
-    height: 35,
+    width: 149,
+    height: 55,
     textShadowRadius: 4,
     textShadowOffset: {
       width: 0,
@@ -321,7 +352,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   editarPerfil: {
-    top: 335,
+    top: 340,
     width: 125,
     height: 29,
     left: 26,
